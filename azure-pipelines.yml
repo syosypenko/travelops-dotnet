@@ -1,0 +1,126 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  nodeVersion: '18.x'
+  dotnetVersion: '10.x'
+
+stages:
+- stage: BuildAndTestBackend
+  displayName: 'Build Backend & Run Unit Tests'
+  jobs:
+  - job: Backend
+    displayName: 'Backend Build & Test'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: $(dotnetVersion)
+
+    - script: dotnet restore backend/TravelOps.Api/TravelOps.Api.csproj
+      displayName: 'Restore API dependencies'
+
+    - script: dotnet build backend/TravelOps.Api/TravelOps.Api.csproj --configuration $(buildConfiguration)
+      displayName: 'Build API'
+
+    - script: dotnet test backend/TravelTaskManager.Tests/TravelTaskManager.Tests.csproj --configuration $(buildConfiguration) --logger trx
+      displayName: 'Run Unit Tests'
+
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        failTaskOnFailedTests: true
+
+- stage: BuildFrontend
+  displayName: 'Build React Frontend'
+  jobs:
+  - job: Frontend
+    displayName: 'Frontend Build'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+
+    - script: |
+        cd frontend
+        npm ci
+      displayName: 'Install Frontend dependencies'
+
+    - script: |
+        cd frontend
+        npm run build
+      displayName: 'Build React app'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: 'frontend/dist'
+        artifactName: 'frontend-build'
+
+- stage: E2EAndIntegrationTests
+  displayName: 'Run E2E & Integration Tests'
+  dependsOn: 
+    - BuildAndTestBackend
+    - BuildFrontend
+  jobs:
+  - job: Playwright
+    displayName: 'Playwright E2E Tests'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: $(dotnetVersion)
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+
+    - script: |
+        cd ui-tests
+        npm ci
+        npx playwright install --with-deps
+      displayName: 'Install Playwright dependencies'
+
+    - script: |
+        # Start backend in background
+        cd backend/TravelOps.Api
+        dotnet run &
+        BACKEND_PID=$!
+        sleep 10
+        
+        # Start frontend build in background
+        cd ../../frontend
+        npm ci
+        npm run build
+        npx http-server dist -p 5173 &
+        FRONTEND_PID=$!
+        sleep 5
+        
+        # Run tests
+        cd ../ui-tests
+        npx playwright test
+        
+        # Cleanup
+        kill $BACKEND_PID $FRONTEND_PID
+      displayName: 'Run Playwright Tests'
+      condition: succeeded()
+      env:
+        CI: true
+
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'ui-tests/test-results/junit.xml'
+
+    - task: PublishBuildArtifacts@1
+      condition: always()
+      inputs:
+        pathToPublish: 'ui-tests/playwright-report'
+        artifactName: 'playwright-report'
+ 

@@ -1,0 +1,101 @@
+.taskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.taskItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.taskItem.completed {
+  background-color: #f0f8f4;
+  border-color: #27ae60;
+}
+
+.taskItem.completed h3 {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.taskContent {
+  flex: 1;
+}
+
+.taskContent h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.taskContent p {
+  margin: 0 0 0.75rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.date {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-left: 1rem;
+}
+
+.actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.toggleButton {
+  background-color: #3498db;
+  color: white;
+}
+
+.toggleButton:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.deleteButton {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background-color: #c0392b;
+}
+
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .taskItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+}

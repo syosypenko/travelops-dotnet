@@ -1,0 +1,18 @@
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f0f4f8;
+  border-radius: 8px;
+  color: #666;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 1.1rem;
+}
