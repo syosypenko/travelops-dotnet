@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { TravelTask, TaskFormData } from './types';
+import { TravelTask, TaskFormData } from '../types';
 
-const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:5107/api';
+const API_BASE_URL = 'http://localhost:5107/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

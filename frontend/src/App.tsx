@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { TravelTask, TaskFormData } from './types';
 import { taskApi } from './api/taskApi';
 import { TaskForm } from './components/TaskForm';
