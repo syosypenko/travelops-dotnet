@@ -1,221 +1,225 @@
-# Travel Task Manager 🌍✈️
+# Travel Task Manager 🌍
 
-A full-stack, production-ready portfolio application demonstrating **QA & Test Automation** expertise with **C# / .NET 10**, **React + TypeScript**, **Playwright**, and **Azure DevOps CI/CD**.
+A simple task management app for organizing your travel plans.
 
-Designed specifically to showcase competencies for **Quality Assurance Engineer** and **Full-Stack Developer** roles, with emphasis on:
-- **Backend**: RESTful API with clean architecture and SOLID principles (C# .NET 10).
-- **Frontend**: Modern React with TypeScript, component-based architecture, and form validation.
-- **QA & Automation**: Comprehensive test coverage including unit tests, integration tests, E2E testing, test data management, and regression testing.
-- **DevOps**: Azure Pipelines CI/CD with automated build, test, and deployment stages.
+**What it does:**
+- Create and manage travel tasks (book flights, reserve hotels, etc.)
+- Mark tasks as complete or incomplete
+- Full test coverage to ensure everything works
+
+**Tech used:**
+- Backend: C# .NET 10 (REST API)
+- Frontend: React + TypeScript
+- Testing: xUnit (backend) + Playwright (E2E)
+- CI/CD: Azure Pipelines
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
-- **Task Management**: Create, Read, Update, and Delete (CRUD) travel-related tasks (e.g., "Book Flight", "Confirm Hotel").
-- **Status Tracking**: Mark tasks as Complete/Incomplete.
-- **REST API**: Fully functional backend API serving JSON data.
-- **Automated Quality Assurance**:
-  - **Unit Tests**: Backend logic validation.
-  - **Integration Tests**: API endpoint verification.
-  - **E2E Tests**: Full UI and API workflow automation using Playwright.
+- Create, edit, and delete travel tasks
+- Mark tasks as complete/incomplete
+- Real-time task counter
+- Form validation with helpful error messages
+- Clean, responsive interface
+- RESTful API with full CRUD operations
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology | Relevance |
-|-------|------------|---10 Web API | Clean architecture, OOP, RESTful design |
-| **Frontend** | React 18 + TypeScript 5 | Modern UI, component composition, type safety |
-| **Package Manager** | npm, Vite | Fast builds, dev server, module bundling |
-| **Database** | In-Memory (Singleton) | Stateful service for demo purposes |
-| **Testing** | xUnit (Backend), Playwright (E2E) | Unit tests, API contract testing, regression tests |
-| **CI/CD** | Azure Pipelines | Multi-stage build, test, artifact management |
-| **API Documentation** | Swagger/OpenAPI | Auto-generated API docs for integration teams
-| **Tools** | Git, Azure DevOps (Concepts) | Version control, Pipeline integration |
+**Backend:**
+- C# .NET 10 Web API
+- In-memory data storage
+- xUnit for testing
+
+**Frontend:**
+- React 18 with TypeScript
+- Vite (fast build tool)
+- Axios for API calls
+
+**Testing:**
+- Backend: xUnit unit tests
+- Frontend: Playwright E2E tests (17 tests covering forms, API, workflows)
+
+**CI/CD:**
+- Azure Pipelines for automated testing
 
 ---
 
-## 📂 Project Structure
+## � Project Structure
 
-```bash
-│   ├── TravelOps.Api/          # ASP.NET Core 10 Web API
-│   │   ├── Controllers/        # REST API endpoints (CRUD)
-│   │   ├── Models/             # Data entities (TravelTask)
-│   │   ├── Services/           # Business logic (TravelTaskService)
-│   │   ├── Program.cs          # DI, CORS, Swagger setup
-│   │   └── TravelOps.Api.csproj
-│   ├── TravelTaskManager.Tests/ # xUnit Test Suite
-│   │   ├── TravelTaskServiceTests.cs # Service unit tests
-│   │   └── TravelTaskManager.Tests.csproj
-│   └── TravelOps.slnx          # Solution file
+```
+Travel_Task_Manager/
+├── backend/
+│   ├── TravelOps.Api/              # REST API (Controllers, Models, Services)
+│   └── TravelTaskManager.Tests/    # Unit tests (xUnit)
 ├── frontend/
-│   ├── src/
-│   │   ├── components/         # React components (TaskForm, TaskList, TaskItem)
-│   │   ├── api/                # API client (Axios)
-│   │   ├── types.ts            # TypeScript interfaces
-│   │   ├── App.tsx             # Main app component
-│   │   └── main.tsx            # React entry point
-│   ├── index.html              # HTML entry
-│   ├── package.json            # Dependencies
-│   ├── tsconfig.json           # TypeScript config
-│   └── vite.config.ts          # Vite config
+│   └── src/
+│       ├── components/             # React components
+│       ├── api/                    # API client
+│       └── App.tsx                 # Main app
 ├── ui-tests/
-│   ├── tests/
-│   │   ├── task-manager.spec.ts    # E2E test suite (50+ tests)
-│   │   ├── fixtures.ts             # Test setup & cleanup
-│   │   └── test-data.ts            # Test data management
-│   ├── playwright.config.ts
-│   └── package.json
-├── azure-pipelines.yml # Multi-stage CI/CD pipeline
-│   └── playwright.config.ts
-├── azure-pipelines.yml     # CI/CD Pipeline Configuration
-└── README.md
+│   └── tests/
+│       ├── task-manager.spec.ts    # E2E tests
+│       └── test-data.ts            # Test helpers
+└── azure-pipelines.yml             # CI/CD config
 ```
 
-## 🔄 CI/CD & DevOps Integration
-
-This project includes a fully configured `azure-pipelines.yml` file to demonstrate:
-- **Build Pipelines**: Automated restoration and building of .NET services.
-- **Unit Testing**: Execution of backend xUnit tests with detailed report publishing.
-- **Integration/E2E Testing**: Headless execution of Playwright tests within a pipeline agent.
-
-This setup aligns perfectly with modern agile workflows requiring reliable regression testing on every commit.
-
 ---
 
-## 🏁 Getting Started
+## 🚀 Quick Start
 
-### Prer10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js](https://nodejs.org/) (for Playwright)
+### Prerequisites
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Node.js](https://nodejs.org/) (v18+)
 
-### 1. Run the Backend (API)
-The backend serves as the core data provider.
+### 1. Start the Backend
 
 ```bash
 cd backend/TravelOps.Api
 dotnet restore
 dotnet run
-Comprehensive test coverage demonstrating professional QA practices aligned with job requirements:
+```
 
-### Backend Unit Tests (xUnit)
-Validates service layer logic with isolated unit tests.
+API runs on: **http://localhost:5107**  
+Swagger docs: **http://localhost:5107/swagger**
+
+### 2. Start the Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+App runs on: **http://localhost:5173**
+
+### 3. Run Tests
+
+**Backend tests:**
 ```bash
 cd backend/TravelTaskManager.Tests
 dotnet test
 ```
-**Covered Scenarios:**
-- ✅ Task creation and ID incrementing
-- ✅ Task retrieval (all, by ID)
-- ✅ Task updates and state management
-- ✅ Task deletion
 
-### API Integration Tests (Playwright)
-Validates REST API contracts and responses.
-```bash
-cd ui-tests
-npm install
-npx playwright test --grep "API Contract"
-```
-**Contract Validation:**
-- ✅ GET /tasks (array structure, task properties)
-- ✅ POST /tasks (201 response, created task returned)
-- ✅ PUT /tasks/:id (204 response, state updated)
-- ✅ DELETE /tasks/:id (204 response)
-- ✅ GET /tasks/:id (404 for non-existent)
-
-### E2E UI Tests (Playwright + React)
-Complete user workflows across React frontend and C# backend.
-```bash
-cd ui-tests
-npx playwright test
-```
-**50+ Test Cases Covering:**
-
-**Form Validation & Submission:**
-- Required field validation (title must be provided)
-- Minimum length validation (3+ characters)
-- Maximum length validation (description ≤ 500 chars)
-- Error message display and styling
-- Form auto-clear after successful submission
-
-**Task Management Workflows:**
-- Create, read, update, delete (CRUD) operations
-- Mark task as complete/incomplete
-- Task count display updates
-- Empty state messaging
-
-**Test Data Management:**
-- Fixture-based test cleanup (auto-delete after each test)
-- API-based task pre-creation for test conditions
-- Test data segregation and isolation
-- Stateful cleanup in test hooks
-
-**Regression Testing:**
-- Complete user workflow: create → view → complete → delete
-- Multi-task state management
-- Error handling and recovery
-- Cross-browser compatibility
-
-### Run All Tests
-```bash
-# Backend unit tests
-cd backend && dotnet test
-
-# Frontend E2E tests (requires API running)
-cd ui-tests && npx playwright test
-
-# View test results
-cd ui-tests && npx playwright show-report
-```
-
-### Test Coverage Highlights
-- **Unit Test Coverage**: Service layer logic, data transformations
-- **Integration Test Coverage**: API endpoints, request/response contracts
-- **E2E Test Coverage**: User workflows, form validation, error scenarios
-- **Regression Test Suite**: Complete workflows to catch breaking changes
-## 🧪 Testing & Quality Assurance
-
-This project places a heavy emphasis on automated testing, aligning with QA engineering requirements.
-
-### Backend: Unit & Integration Tests (xUnit)
-Validates internal logic and API responses.
-
-```bash
-cd backend
-dotnet test
-```
-
-### UI & API Systems Tests (Playwright)
-Validates the end-to-end user journey and API contracts.
-
+**E2E tests** (requires backend running):
 ```bash
 cd ui-tests
 npm install
 npx playwright test
+```
+
+View test report:
+```bash
+npx playwright show-report
 ```
 
 ---
 
-## 🎯 Alignment with Job Requirements
+## 🧪 Test Coverage
 
-### **For QA & Test Automation Roles** ✅
-- **Playwright & TypeScript**: Implements comprehensive E2E testing with 50+ test cases covering form validation, API contracts, and user workflows
-- **Test Data Management**: Fixture-based cleanup, pre-condition setup via API, test data factories in `test-data.ts`
-- **Test Coverage Strategy**: Unit tests (xUnit), integration tests (API contracts), E2E tests (UI workflows), regression tests (full scenarios)
-- **CI/CD Integration**: Azure Pipelines with multi-stage build, test execution, and report publishing
-- **API Testing**: Contract validation, status codes, response structure verification
-- **Regression Prevention**: Automated test suite runs on every commit to catch breaking changes
+### Backend Unit Tests (4 tests)
+Tests core business logic:
+- Creating tasks
+- Retrieving tasks
+- Updating task status
+- Deleting tasks
 
-### **For .NET Developer Roles** ✅
-- **C# & .NET 10**: Modern async/await patterns, dependency injection, clean architecture
-- **RESTful API Design**: Proper HTTP verbs, status codes, CORS configuration, Swagger documentation
-- **Clean Code & SOLID**: Single Responsibility Service, dependency-injected controllers, proper error handling
-- **Web API Best Practices**: Content negotiation, problem details error responses, OpenAPI documentation
+### E2E Tests (17 tests)
+Tests the full application:
 
-### **For Full-Stack Developer Roles** ✅
-- **React + TypeScript**: Component composition, hooks (useState, useEffect), form validation, error handling
-- **Type Safety**: Strict TypeScript interfaces for API contracts, component props, test data
-- **Modern Build Tools**: Vite for fast development, npm for dependency management
-- **API Client Patterns**: Axios integration, request/response interceptors, error handling
-- **Responsive Design**: Mobile-first CSS, flexible layouts, accessibility considerations
+**Form Validation:**
+- Required fields
+- Minimum/maximum length
+- Error message display
+
+**Task Operations:**
+- Create new tasks
+- Toggle completion status
+- Delete tasks (with confirmation dialog)
+- Task counter updates
+
+**API Contracts:**
+- GET /tasks
+- POST /tasks
+- PUT /tasks/:id
+- DELETE /tasks/:id
+- Error responses (404)
+
+**UI Scenarios:**
+- Empty state display
+- Task list rendering
+- Form reset after submission
+
+---
+
+## 🎯 Key Highlights
+
+**For QA/Test Engineers:**
+- Playwright E2E test suite with 17 passing tests
+- Test data management and cleanup fixtures
+- API contract validation
+- Form validation testing
+- Dialog handling and user interactions
+
+**For Backend Developers:**
+- Clean REST API design with proper HTTP status codes
+- Dependency injection and service layer pattern
+- xUnit unit tests with 100% service coverage
+- Swagger/OpenAPI documentation
+
+**For Frontend Developers:**
+- Modern React with TypeScript and type safety
+- Component composition and reusability
+- Form validation and error handling
+- CSS modules for scoped styling
+
+**CI/CD:**
+- Azure Pipelines configuration
+- Automated build and test execution
+- Multi-stage pipeline setup
+
+---
+
+## 📝 API Endpoints
+
+```
+GET    /api/tasks          # Get all tasks
+GET    /api/tasks/:id      # Get task by ID
+POST   /api/tasks          # Create new task
+PUT    /api/tasks/:id      # Update task
+DELETE /api/tasks/:id      # Delete task
+```
+
+**Example Task:**
+```json
+{
+  "id": 1,
+  "title": "Book Flight",
+  "description": "Book round-trip tickets to Tokyo",
+  "isCompleted": false
+}
+```
+
+---
+
+## 🔧 Development
+
+**Backend hot reload:**
+```bash
+cd backend/TravelOps.Api
+dotnet watch run
+```
+
+**Frontend hot reload:**
+```bash
+cd frontend
+npm run dev
+```
+
+**Run tests in watch mode:**
+```bash
+cd ui-tests
+npx playwright test --ui
+```
