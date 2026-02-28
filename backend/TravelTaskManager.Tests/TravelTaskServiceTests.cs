@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Xunit;
 using TravelOps.Api.Models;
 using TravelOps.Api.Services;

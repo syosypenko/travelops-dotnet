@@ -50,7 +50,8 @@ export async function deleteTaskViaAPI(baseUrl: string, taskId: number): Promise
     method: 'DELETE',
   });
 
-  if (!response.ok) {
+  // 404 means task already doesn't exist, which is fine for cleanup
+  if (!response.ok && response.status !== 404) {
     throw new Error(`Failed to delete task: ${response.statusText}`);
   }
 }

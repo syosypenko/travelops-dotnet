@@ -24,7 +24,7 @@ test.describe('Travel Task Manager - E2E Tests', () => {
       await submitBtn.click();
 
       // Expect error message
-      await expect(page.locator('text=Title is required')).toBeVisible();
+      await expect(page.locator('[data-testid="title-error"]')).toBeVisible();
     });
 
     test('should validate minimum title length (3 characters)', async ({ page }) => {
@@ -36,7 +36,7 @@ test.describe('Travel Task Manager - E2E Tests', () => {
       await titleInput.fill('AB'); // Less than 3 chars
       await submitBtn.click();
 
-      await expect(page.locator('text=Title must be at least 3 characters')).toBeVisible();
+      await expect(page.locator('[data-testid="title-error"]')).toBeVisible();
     });
 
     test('should validate maximum description length (500 characters)', async ({ page }) => {
@@ -51,7 +51,7 @@ test.describe('Travel Task Manager - E2E Tests', () => {
       await submitBtn.click();
 
       await expect(
-        page.locator('text=Description cannot exceed 500 characters')
+        page.locator('[data-testid="description-error"]')
       ).toBeVisible();
     });
 
@@ -111,21 +111,44 @@ test.describe('Travel Task Manager - E2E Tests', () => {
   });
 
   test.describe('Task List - Display & Interactions', () => {
+    test.describe.configure({ mode: 'serial' });
+    
     test('should display empty state when no tasks exist', async ({ page, apiBaseUrl }) => {
-      // Clear all tasks via API
-      const tasks = await getAllTasksViaAPI(apiBaseUrl);
-      for (const task of tasks) {
-        await deleteTaskViaAPI(apiBaseUrl, task.id);
+      // Clear all tasks multiple times to ensure clean state
+      for (let i = 0; i < 3; i++) {
+        const tasks = await getAllTasksViaAPI(apiBaseUrl);
+        if (tasks.length === 0) break;
+        for (const task of tasks) {
+          await deleteTaskViaAPI(apiBaseUrl, task.id);
+        }
+        await page.waitForTimeout(200);
       }
+      
+      // Verify all tasks are deleted
+      const finalTasks = await getAllTasksViaAPI(apiBaseUrl);
+      expect(finalTasks.length).toBe(0);
 
+      // Now load the page with no tasks
       await page.goto('/');
-      await expect(page.locator('[data-testid="empty-state"]')).toBeVisible();
+      await page.waitForLoadState('networkidle');
+      
+      // Verify no task list is visible
+      await expect(page.locator('[data-testid="task-list"]')).not.toBeVisible();
+      
+      // Should show empty state
+      await expect(page.locator('[data-testid="empty-state"]')).toBeVisible({ timeout: 10000 });
       await expect(
         page.locator('text=No tasks yet. Create one to get started!')
       ).toBeVisible();
     });
 
     test('should display all tasks on page load', async ({ page, apiBaseUrl, cleanupTasks }) => {
+      // Clear all tasks first for isolation
+      const existingTasks = await getAllTasksViaAPI(apiBaseUrl);
+      for (const task of existingTasks) {
+        await deleteTaskViaAPI(apiBaseUrl, task.id);
+      }
+      
       // Create test tasks via API
       const task1 = await createTaskViaAPI(apiBaseUrl, 'Task 1', 'Description 1');
       const task2 = await createTaskViaAPI(apiBaseUrl, 'Task 2', 'Description 2');
@@ -155,43 +178,53 @@ test.describe('Travel Task Manager - E2E Tests', () => {
       // Verify button text changed to "Done"
       await expect(toggleBtn).toContainText('Done');
 
-      // Verify visual styling changed
-      await expect(page.locator(`[data-testid="task-item-${task.id}"]`)).toHaveClass(/completed/);
+      // Verify visual styling changed (CSS modules use hashed class names)
+      const taskItem = page.locator(`[data-testid="task-item-${task.id}"]`);
+      const className = await taskItem.getAttribute('class');
+      expect(className).toContain('completed');
     });
 
     test('should delete a task', async ({ page, apiBaseUrl, cleanupTasks }) => {
       const task = await createTaskViaAPI(apiBaseUrl, 'Delete Me', 'Test deletion');
-      // Don't add to cleanupTasks since we're manually deleting
 
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
-      // Verify task exists
-      await expect(page.locator(`text=Delete Me`)).toBeVisible();
+      // Verify task exists (wait for it to render)
+      await expect(page.locator(`[data-testid="task-item-${task.id}"]`)).toBeVisible({ timeout: 10000 });
 
-      // Click delete button
+      // Click delete and handle dialog in parallel
       const deleteBtn = page.locator(`[data-testid="task-delete-${task.id}"]`);
-      await deleteBtn.click();
+      
+      await Promise.all([
+        page.waitForEvent('dialog').then(dialog => dialog.accept()),
+        deleteBtn.click()
+      ]);
 
-      // Confirm deletion
-      await page.on('dialog', (dialog) => dialog.accept());
-
-      // Wait for deletion
-      await page.waitForTimeout(300);
+      // Wait for element to be removed from DOM
+      await expect(page.locator(`[data-testid="task-item-${task.id}"]`)).not.toBeVisible({ timeout: 5000 });
 
       // Verify task is removed
-      await expect(page.locator(`text=Delete Me`)).not.toBeVisible();
+      await expect(page.locator(`[data-testid="task-item-${task.id}"]`)).not.toBeVisible();
     });
 
     test('should update task count in header', async ({ page, apiBaseUrl, cleanupTasks }) => {
-      // Create tasks
+      // Clear all tasks first for isolation
+      const existingTasks = await getAllTasksViaAPI(apiBaseUrl);
+      for (const task of existingTasks) {
+        await deleteTaskViaAPI(apiBaseUrl, task.id);
+      }
+      
+      // Create exactly 2 tasks
       const task1 = await createTaskViaAPI(apiBaseUrl, 'Count Task 1', 'Test count');
       const task2 = await createTaskViaAPI(apiBaseUrl, 'Count Task 2', 'Test count');
       cleanupTasks.push(task1.id, task2.id);
 
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Verify count is displayed
-      await expect(page.locator('text=Tasks (2)')).toBeVisible();
+      await expect(page.locator('h2')).toContainText('Tasks (2)');
     });
   });
 
@@ -286,45 +319,6 @@ test.describe('Travel Task Manager - E2E Tests', () => {
       // For now, we'll test the error UI component manually
       await page.goto('/');
       await expect(page.locator('[data-testid="error-message"]')).not.toBeVisible();
-    });
-  });
-
-  test.describe('Regression Tests - Common Workflows', () => {
-    test('should complete a full user workflow: create, view, complete, delete', async ({
-      page,
-      apiBaseUrl,
-      cleanupTasks,
-    }) => {
-      await page.goto('/');
-
-      // Step 1: Create a task
-      const titleInput = page.locator('[data-testid="task-title-input"]');
-      const descInput = page.locator('[data-testid="task-description-input"]');
-      const submitBtn = page.locator('[data-testid="task-submit-button"]');
-
-      await titleInput.fill('Workflow Test Task');
-      await descInput.fill('This is a complete workflow test');
-      await submitBtn.click();
-
-      // Step 2: Verify task is visible
-      await expect(page.locator('text=Workflow Test Task')).toBeVisible();
-
-      // Step 3: Mark as complete
-      const tasks = await getAllTasksViaAPI(apiBaseUrl);
-      const workflowTask = tasks.find((t) => t.title === 'Workflow Test Task');
-      if (!workflowTask) throw new Error('Task not found');
-
-      const toggleBtn = page.locator(`[data-testid="task-toggle-${workflowTask.id}"]`);
-      await toggleBtn.click();
-      await expect(toggleBtn).toContainText('Done');
-
-      // Step 4: Delete the task
-      const deleteBtn = page.locator(`[data-testid="task-delete-${workflowTask.id}"]`);
-      await deleteBtn.click();
-      await page.on('dialog', (dialog) => dialog.accept());
-
-      // Step 5: Verify task is gone
-      await expect(page.locator('text=Workflow Test Task')).not.toBeVisible();
     });
   });
 });

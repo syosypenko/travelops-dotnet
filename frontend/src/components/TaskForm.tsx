@@ -60,7 +60,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, isLoading = false 
           data-testid="task-title-input"
           className={errors.title ? styles.inputError : ''}
         />
-        {errors.title && <span className={styles.error}>{errors.title}</span>}
+        {errors.title && <span className={styles.error} data-testid="title-error">{errors.title}</span>}
       </div>
 
       <div className={styles.formGroup}>
@@ -74,7 +74,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, isLoading = false 
           data-testid="task-description-input"
           className={errors.description ? styles.inputError : ''}
         />
-        {errors.description && <span className={styles.error}>{errors.description}</span>}
+        {errors.description && <span className={styles.error} data-testid="description-error">{errors.description}</span>}
       </div>
 
       <button
